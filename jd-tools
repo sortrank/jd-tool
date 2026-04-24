@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>京东业务助手</title>
-    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
         :root { --jd-red: #e1251b; }
         body { 
@@ -35,24 +34,36 @@
             box-sizing: border-box;
             outline: none;
             text-align: center;
+            margin-bottom: 10px;
         }
         input:focus { border-color: var(--jd-red); }
         
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--jd-red);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
         .qr-section { display: none; margin-top: 15px; }
         .qr-box { 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             padding: 15px 0;
+            min-height: 180px; /* 防止加载时抖动 */
         }
-        .qr-canvas { margin: 10px 0; }
         .step-tip {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--jd-red);
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
-        .url-display { font-size: 10px; color: #999; word-break: break-all; margin-top: 5px; }
+        .url-display { font-size: 11px; color: #999; margin-top: 8px; }
     </style>
 </head>
 <body>
@@ -60,66 +71,64 @@
 <div class="container">
     <div class="card">
         <h3>请输入阿姨 ID</h3>
-        <input type="number" id="auntIdInput" placeholder="输入 6-10 位数字" oninput="generateQRs()" />
+        <input type="number" id="auntIdInput" placeholder="6-10位数字" />
+        <button onclick="generateQRs()">生成二维码</button>
     </div>
 
     <div id="resultArea" class="qr-section">
         <div class="card">
             <div class="step-tip">第一步：先扫这个（阿姨详情）</div>
             <div id="qrcode1" class="qr-box"></div>
-            <div id="url1" class="url-display"></div>
         </div>
 
         <div class="card">
             <div class="step-tip">第二步：再扫这个（订单列表）</div>
             <div id="qrcode2" class="qr-box"></div>
-            <div id="url2" class="url-display"></div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script>
-    // 初始化二维码对象
-    let qr1 = null;
-    let qr2 = null;
-
     function generateQRs() {
         const id = document.getElementById('auntIdInput').value;
         const resultArea = document.getElementById('resultArea');
         
-        // 当输入长度在 6-10 位时显示并生成
-        if (/^\d{6,10}$/.test(id)) {
-            resultArea.style.display = 'block';
-            
-            const targetUrl1 = `https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=${id}&routerName=scanOptimizePage`;
-            const targetUrl2 = `https://m-ls.jd.com/order`;
-
-            // 更新链接文字显示（可选）
-            document.getElementById('url1').innerText = "ID: " + id;
-            document.getElementById('url2').innerText = "跳转至订单页";
-
-            // 清除旧二维码并生成新二维码
-            document.getElementById('qrcode1').innerHTML = "";
-            document.getElementById('qrcode2').innerHTML = "";
-
-            new QRCode(document.getElementById("qrcode1"), {
-                text: targetUrl1,
-                width: 180,
-                height: 180,
-                colorDark : "#000000",
-                colorLight : "#ffffff"
-            });
-
-            new QRCode(document.getElementById("qrcode2"), {
-                text: targetUrl2,
-                width: 180,
-                height: 180,
-                colorDark : "#000000",
-                colorLight : "#ffffff"
-            });
-        } else {
-            resultArea.style.display = 'none';
+        if (!/^\d{6,10}$/.test(id)) {
+            alert("请输入正确的6-10位数字ID");
+            return;
         }
+
+        // 检查库是否加载成功
+        if (typeof QRCode === "undefined") {
+            alert("二维码组件加载失败，请检查网络或刷新重试");
+            return;
+        }
+
+        resultArea.style.display = 'block';
+        
+        const targetUrl1 = `https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=${id}&routerName=scanOptimizePage`;
+        const targetUrl2 = `https://m-ls.jd.com/order`;
+
+        // 清空旧的
+        document.getElementById('qrcode1').innerHTML = "";
+        document.getElementById('qrcode2').innerHTML = "";
+
+        // 生成新的
+        new QRCode(document.getElementById("qrcode1"), {
+            text: targetUrl1,
+            width: 180,
+            height: 180
+        });
+
+        new QRCode(document.getElementById("qrcode2"), {
+            text: targetUrl2,
+            width: 180,
+            height: 180
+        });
+        
+        // 滚动到二维码区域
+        resultArea.scrollIntoView({ behavior: 'smooth' });
     }
 </script>
 
