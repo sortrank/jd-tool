@@ -1,43 +1,127 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <title>链接转换器</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>京东业务助手</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <style>
+        :root { --jd-red: #e1251b; }
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background-color: #f7f7f7; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px;
+            margin: 0;
+        }
+        .container { width: 100%; max-width: 400px; }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        h3 { margin-top: 0; color: #333; font-size: 16px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+        }
+        input:focus { border-color: var(--jd-red); }
+        
+        .qr-section { display: none; margin-top: 15px; }
+        .qr-box { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 15px 0;
+        }
+        .qr-canvas { margin: 10px 0; }
+        .step-tip {
+            font-size: 13px;
+            color: var(--jd-red);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .url-display { font-size: 10px; color: #999; word-break: break-all; margin-top: 5px; }
+    </style>
 </head>
 <body>
-    <h2>JD 链接二维码生成器</h2>
-    <input type="text" id="auntIdInput" placeholder="输入6-10位数字" maxlength="10">
-    <button onclick="generate()">生成二维码</button>
-    
-    <div id="result" style="margin-top:20px;">
-        <p id="urlText" style="word-break: break-all; color: blue;"></p>
-        <div id="qrcode"></div>
+
+<div class="container">
+    <div class="card">
+        <h3>请输入阿姨 ID</h3>
+        <input type="number" id="auntIdInput" placeholder="输入 6-10 位数字" oninput="generateQRs()" />
     </div>
 
-    <script>
-        function generate() {
-            const id = document.getElementById('auntIdInput').value;
-            if(!/^\d{6,10}$/.test(id)) {
-                alert("请输入6-10位数字！");
-                return;
-            }
+    <div id="resultArea" class="qr-section">
+        <div class="card">
+            <div class="step-tip">第一步：先扫这个（阿姨详情）</div>
+            <div id="qrcode1" class="qr-box"></div>
+            <div id="url1" class="url-display"></div>
+        </div>
+
+        <div class="card">
+            <div class="step-tip">第二步：再扫这个（订单列表）</div>
+            <div id="qrcode2" class="qr-box"></div>
+            <div id="url2" class="url-display"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 初始化二维码对象
+    let qr1 = null;
+    let qr2 = null;
+
+    function generateQRs() {
+        const id = document.getElementById('auntIdInput').value;
+        const resultArea = document.getElementById('resultArea');
+        
+        // 当输入长度在 6-10 位时显示并生成
+        if (/^\d{6,10}$/.test(id)) {
+            resultArea.style.display = 'block';
             
-            // 基础链接
-            const baseUrl = "https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=73628&routerName=scanOptimizePage";
-            // 替换 auntId
-            const newUrl = baseUrl.replace(/auntId=\d+/, "auntId=" + id);
-            
-            // 显示链接
-            document.getElementById('urlText').innerText = newUrl;
-            
+            const targetUrl1 = `https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=${id}&routerName=scanOptimizePage`;
+            const targetUrl2 = `https://m-ls.jd.com/order`;
+
+            // 更新链接文字显示（可选）
+            document.getElementById('url1').innerText = "ID: " + id;
+            document.getElementById('url2').innerText = "跳转至订单页";
+
             // 清除旧二维码并生成新二维码
-            document.getElementById('qrcode').innerHTML = "";
-            new QRCode(document.getElementById("qrcode"), {
-                text: newUrl,
-                width: 200,
-                height: 200
+            document.getElementById('qrcode1').innerHTML = "";
+            document.getElementById('qrcode2').innerHTML = "";
+
+            new QRCode(document.getElementById("qrcode1"), {
+                text: targetUrl1,
+                width: 180,
+                height: 180,
+                colorDark : "#000000",
+                colorLight : "#ffffff"
             });
+
+            new QRCode(document.getElementById("qrcode2"), {
+                text: targetUrl2,
+                width: 180,
+                height: 180,
+                colorDark : "#000000",
+                colorLight : "#ffffff"
+            });
+        } else {
+            resultArea.style.display = 'none';
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
