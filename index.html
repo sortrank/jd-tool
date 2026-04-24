@@ -3,218 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>京东业务助手 - 王煮粥出品</title>
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>阿姨定位系统 - 王煮粥出品</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+        /* Pornhub 风格配色 */
         :root {
-            --jd-red: #e1251b;
-            --bg: #f2f5f8;
-            --card-bg: #ffffff;
-            --text-main: #2c3e50;
-            --text-sub: #7f8c8d;
+            --bg-color: #000000;
+            --container-bg: #1b1b1b;
+            --accent-color: #ff9900;
+            --text-color: #ffffff;
         }
 
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--bg); 
-            color: var(--text-main);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 20px;
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: Arial, sans-serif;
             margin: 0;
-            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
 
-        .container { width: 100%; max-width: 700px; }
+        /* 顶部 Logo 风格提示 */
+        .header-logo {
+            font-weight: bold;
+            font-size: 24px;
+            margin-bottom: 30px;
+        }
+        .header-logo span {
+            background-color: var(--accent-color);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+        }
 
-        /* 输入区美化 */
-        .header-card {
-            background: var(--card-bg);
+        .container {
+            background-color: var(--container-bg);
             padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            margin-bottom: 25px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             text-align: center;
         }
 
-        h1 { margin: 0 0 10px; font-size: 24px; letter-spacing: 1px; }
-        .subtitle { font-size: 14px; color: var(--text-sub); margin-bottom: 25px; }
-
-        .input-box {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        input {
-            width: 100%;
-            max-width: 320px;
-            padding: 15px;
-            border: 2px solid #edf2f7;
-            border-radius: 12px;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        input:focus { border-color: var(--jd-red); }
-
-        .btn-main {
-            width: 100%;
-            max-width: 320px;
-            padding: 15px;
-            background: var(--jd-red);
-            color: white;
-            border: none;
-            border-radius: 12px;
+        h2 {
             font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(225, 37, 27, 0.3);
-            transition: transform 0.1s, background 0.2s;
-        }
-        .btn-main:active { transform: scale(0.97); background: #c8160d; }
-
-        /* 二维码展示区 - 强化左右结构 */
-        .qr-grid { 
-            display: none; 
-            gap: 20px; 
-            margin-top: 10px;
-            width: 100%;
+            margin-bottom: 20px;
         }
 
-        .qr-card {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            flex: 1; /* 平分宽度 */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
+        input[type="text"] {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid #333;
+            background: #000;
+            color: #fff;
+            border-radius: 4px;
+            outline: none;
+            font-size: 16px;
         }
 
-        .badge {
-            background: rgba(225, 37, 27, 0.1);
-            color: var(--jd-red);
-            padding: 5px 15px;
-            border-radius: 30px;
-            font-size: 12px;
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            margin-top: 20px;
+            width: 90%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            border: none;
+            color: #000;
             font-weight: bold;
-            margin-bottom: 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: opacity 0.2s;
         }
 
-        .qr-title { font-weight: 600; margin-bottom: 15px; font-size: 16px; }
-        .qr-container { background: #fff; padding: 10px; border-radius: 10px; }
+        button:hover {
+            opacity: 0.8;
+        }
 
-        /* 明显版版权信息 */
-        .copyright-card {
-            margin-top: 50px;
-            padding: 20px 40px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .qr-section {
+            margin-top: 30px;
+            display: none; /* 初始隐藏 */
+        }
+
+        .qr-item {
+            margin-bottom: 30px;
+            background: #282828;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .qr-title {
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .qrcode {
             display: flex;
-            align-items: center;
-            gap: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            justify-content: center;
+            background: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 0 auto;
+            width: fit-content;
         }
 
-        .author-box { text-align: left; }
-        .author-label { font-size: 10px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 1px; }
-        .author-name { font-size: 18px; font-weight: 800; color: #2c3e50; display: block; }
-        .wechat-box { border-left: 1px solid #ddd; padding-left: 20px; }
-        .wechat-id { font-family: monospace; font-size: 16px; color: var(--jd-red); font-weight: 600; }
-
-        /* 响应式适配 */
-        @media (min-width: 600px) {
-            .qr-grid { display: flex; flex-direction: row; }
+        .footer {
+            margin-top: 40px;
+            color: #666;
+            font-size: 12px;
         }
-
-        @media (max-width: 599px) {
-            .qr-grid { display: flex; flex-direction: column; }
-            .copyright-card { padding: 15px 25px; flex-direction: column; gap: 10px; border-radius: 20px; }
-            .wechat-box { border-left: none; padding-left: 0; border-top: 1px solid #ddd; padding-top: 10px; width: 100%; text-align: center; }
+        .footer-highlight {
+            color: #999;
+            border-bottom: 1px solid #444;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-card">
-        <h1>京东业务助手</h1>
-        <p class="subtitle">王煮粥独家定制 · 极速生成版</p>
-        <div class="input-box">
-            <input type="number" id="aid" pattern="\d*" placeholder="输入阿姨 ID" onkeypress="if(event.keyCode==13) generate()">
-            <button class="btn-main" onclick="generate()">确认 ID 并生成</button>
+    <div class="header-logo">
+        JD<span>CLEANING</span>
+    </div>
+
+    <div class="container">
+        <h2>请输入阿姨工号</h2>
+        <input type="text" id="auntIdInput" placeholder="例如: 123456">
+        <button onclick="generateQRs()">确认输入</button>
+
+        <div id="qrResult" class="qr-section">
+            <div class="qr-item">
+                <div class="qr-title">扫码定位阿姨</div>
+                <div id="qrcode1" class="qrcode"></div>
+            </div>
+
+            <div class="qr-item">
+                <div class="qr-title">定位阿姨后扫码查询时间</div>
+                <div id="qrcode2" class="qrcode"></div>
+            </div>
         </div>
     </div>
 
-    <div id="qrGrid" class="qr-grid">
-        <div class="qr-card">
-            <span class="badge">STEP 01</span>
-            <div class="qr-title">阿姨详情页</div>
-            <div id="q1" class="qr-container"></div>
-        </div>
-        <div class="qr-card">
-            <span class="badge">STEP 02</span>
-            <div class="qr-title">订单列表页</div>
-            <div id="q2" class="qr-container"></div>
-        </div>
+    <div class="footer">
+        <p class="footer-highlight">王煮粥出品，微信novilos</p>
     </div>
-</div>
 
-<div class="copyright-card">
-    <div class="author-box">
-        <span class="author-label">Created By</span>
-        <span class="author-name">王煮粥</span>
-    </div>
-    <div class="wechat-box">
-        <span class="author-label">WeChat Contact</span>
-        <div class="wechat-id">novilos</div>
-    </div>
-</div>
+    <script>
+        function generateQRs() {
+            const auntId = document.getElementById('auntIdInput').value.trim();
+            if (!auntId) {
+                alert("请输入有效的阿姨工号");
+                return;
+            }
 
-<script>
-    function generate() {
-        const aid = document.getElementById('aid').value;
-        
-        if (!/^\d{6,10}$/.test(aid)) {
-            alert("请输入正确的6-10位数字ID");
-            return;
+            // 清空旧的二维码
+            document.getElementById('qrcode1').innerHTML = "";
+            document.getElementById('qrcode2').innerHTML = "";
+            
+            // 显示展示区域
+            document.getElementById('qrResult').style.display = 'block';
+
+            // 链接1：替换auntId
+            const url1 = `https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=${auntId}&routerName=scanOptimizePage`;
+            new QRCode(document.getElementById("qrcode1"), {
+                text: url1,
+                width: 180,
+                height: 180
+            });
+
+            // 链接2：查询时间
+            const url2 = "https://m-ls.jd.com/order";
+            new QRCode(document.getElementById("qrcode2"), {
+                text: url2,
+                width: 180,
+                height: 180
+            });
         }
-
-        if (typeof QRCode === "undefined") {
-            alert("正在加载插件，请稍候...");
-            return;
-        }
-
-        // 显示结果区域
-        const grid = document.getElementById('qrGrid');
-        grid.style.display = 'flex';
-        
-        // 清空旧内容
-        document.getElementById('q1').innerHTML = "";
-        document.getElementById('q2').innerHTML = "";
-
-        const url1 = "https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=" + aid + "&routerName=scanOptimizePage";
-        const url2 = "https://m-ls.jd.com/order";
-
-        // 生成二维码
-        new QRCode(document.getElementById("q1"), { text: url1, width: 200, height: 200, colorDark: "#2c3e50" });
-        new QRCode(document.getElementById("q2"), { text: url2, width: 200, height: 200, colorDark: "#2c3e50" });
-
-        // 平滑滚动到底部
-        setTimeout(() => {
-            window.scrollTo({ top: grid.offsetTop - 20, behavior: 'smooth' });
-        }, 100);
-    }
-</script>
-
+    </script>
 </body>
 </html>
