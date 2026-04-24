@@ -1,247 +1,43 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>京东业务助手 - 王煮粥出品</title>
-    <style>
-        :root {
-            --jd-red: #e1251b;
-            --bg-color: #f7f8fa;
-            --text-main: #333;
-            --text-sub: #999;
-            --card-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; 
-            background-color: var(--bg-color); 
-            color: var(--text-main);
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 20px;
-            margin: 0;
-            min-height: 100vh;
-        }
-
-        /* 主容器 */
-        .container { 
-            width: 100%; 
-            max-width: 600px; /* 调整宽度以适应左右布局 */
-        }
-
-        /* 顶部欢迎卡片 */
-        .card-header {
-            background: white;
-            padding: 25px;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .card-header h1 { margin: 0 0 10px; font-size: 22px; font-weight: 600; color: var(--text-main); }
-        .card-header p { margin: 0; font-size: 14px; color: var(--text-sub); line-height: 1.6; }
-
-        /* 输入区 */
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-
-        input {
-            width: 60%;
-            padding: 12px 15px;
-            border: 1px solid #e1e1e1;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        input:focus { border-color: var(--jd-red); box-shadow: 0 0 0 3px rgba(225, 37, 27, 0.1); }
-
-        button {
-            padding: 12px 24px;
-            background-color: var(--jd-red);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover { background-color: #c8160d; }
-
-        /* 二维码展示区 - 左右布局的核心 */
-        .qr-section { 
-            display: none; /* 初始隐藏 */
-            gap: 20px;
-            margin-top: 20px;
-            flex-wrap: wrap; /* 手机端自动换行 */
-            justify-content: center;
-        }
-
-        .qr-wrapper {
-            background: white;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-            flex: 1; /* 平分宽度 */
-            min-width: 250px; /* 保证手机端的最小宽度 */
-            max-width: 280px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .step-badge {
-            background-color: rgba(225, 37, 27, 0.08);
-            color: var(--jd-red);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .step-desc {
-            font-size: 15px;
-            color: var(--text-main);
-            font-weight: 500;
-            margin-bottom: 15px;
-        }
-
-        /* 二维码库会直接把画布插到这个div里 */
-        .qr-canvas { 
-            padding: 5px;
-            background: #fff;
-        }
-
-        /* 底部个人信息 */
-        .footer {
-            margin-top: auto; /* 推到底部 */
-            padding: 40px 0 20px;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-sub);
-            width: 100%;
-        }
-        .footer-line {
-            display: inline-flex;
-            align-items: center;
-            gap: 15px;
-            background: rgba(0,0,0,0.03);
-            padding: 8px 15px;
-            border-radius: 30px;
-        }
-        .author-name { color: #666; font-weight: 500; }
-        .wechat-id { color: #888; }
-
-        /* 媒体查询：适配超小手机屏幕 */
-        @media (max-width: 580px) {
-            .qr-section { flex-direction: column; align-items: center; }
-            input { width: 100%; }
-            .input-group { flex-direction: column; width: 100%; }
-        }
-    </style>
+    <title>链接转换器</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 </head>
 <body>
-
-<div class="container">
-    <div class="card-header">
-        <h1>京东业务助手</h1>
-        <p>输入阿姨 ID，系统将为您自动生成<br>第一步（阿姨详情）与第二步（订单列表）扫描链接。</p>
-        <div class="input-group">
-            <input type="number" id="aid" placeholder="请输入6-10位数字" />
-            <button onclick="generate()">生成链接</button>
-        </div>
+    <h2>JD 链接二维码生成器</h2>
+    <input type="text" id="auntIdInput" placeholder="输入6-10位数字" maxlength="10">
+    <button onclick="generate()">生成二维码</button>
+    
+    <div id="result" style="margin-top:20px;">
+        <p id="urlText" style="word-break: break-all; color: blue;"></p>
+        <div id="qrcode"></div>
     </div>
 
-    <div id="resArea" class="qr-section">
-        <div class="qr-wrapper">
-            <div class="step-badge">步骤一</div>
-            <div class="step-desc">扫码进入详情页</div>
-            <div id="q1" class="qr-canvas"></div>
-        </div>
-
-        <div class="qr-wrapper">
-            <div class="step-badge">步骤二</div>
-            <div class="step-desc">扫码进入订单页</div>
-            <div id="q2" class="qr-canvas"></div>
-        </div>
-    </div>
-</div>
-
-<div class="footer">
-    <div class="footer-line">
-        <span>作者：<span class="author-name">王煮粥</span></span>
-        <span>|</span>
-        <span>微信：<span class="wechat-id">novilos</span></span>
-    </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-    function generate() {
-        var aidValue = document.getElementById('aid').value;
-        var resArea = document.getElementById('resArea');
-        
-        // 校验输入
-        if(!/^\d{6,10}$/.test(aidValue)) {
-            alert("请输入正确的6-10位数字ID");
-            return;
+    <script>
+        function generate() {
+            const id = document.getElementById('auntIdInput').value;
+            if(!/^\d{6,10}$/.test(id)) {
+                alert("请输入6-10位数字！");
+                return;
+            }
+            
+            // 基础链接
+            const baseUrl = "https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=73628&routerName=scanOptimizePage";
+            // 替换 auntId
+            const newUrl = baseUrl.replace(/auntId=\d+/, "auntId=" + id);
+            
+            // 显示链接
+            document.getElementById('urlText').innerText = newUrl;
+            
+            // 清除旧二维码并生成新二维码
+            document.getElementById('qrcode').innerHTML = "";
+            new QRCode(document.getElementById("qrcode"), {
+                text: newUrl,
+                width: 200,
+                height: 200
+            });
         }
-
-        // 检查库是否加载成功
-        if (typeof QRCode === "undefined") {
-            alert("二维码组件加载中，请稍候再试...");
-            return;
-        }
-
-        // 显示区域
-        resArea.style.display = 'flex';
-        
-        // 清空旧的
-        document.getElementById('q1').innerHTML = "";
-        document.getElementById('q2').innerHTML = "";
-
-        // 拼接 URL 1 (详情)
-        var url1 = "https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=" + aidValue + "&routerName=scanOptimizePage";
-        
-        // 拼接 URL 2 (订单)
-        var url2 = "https://m-ls.jd.com/order";
-
-        // 生成第一个二维码
-        new QRCode(document.getElementById("q1"), {
-            text: url1,
-            width: 180,
-            height: 180,
-            colorDark : "#333333", // 使用深灰色代替纯黑，更柔和
-            colorLight : "#ffffff"
-        });
-
-        // 生成第二个二维码
-        new QRCode(document.getElementById("q2"), {
-            text: url2,
-            width: 180,
-            height: 180,
-            colorDark : "#333333",
-            colorLight : "#ffffff"
-        });
-
-        // 自动滚动到二维码区域，提升体验
-        window.scrollTo({
-            top: document.getElementById('resArea').offsetTop - 20,
-            behavior: 'smooth'
-        });
-    }
-</script>
-
+    </script>
 </body>
 </html>
