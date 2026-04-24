@@ -179,4 +179,37 @@
             document.getElementById('qrcode3').innerHTML = "";
             
             // 显示结果
-            document.getElementById('qrResult').style.display
+            document.getElementById('qrResult').style.display = 'block';
+
+            // 1. 定位阿姨二维码 (动态链接)
+            const url1 = `https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=${auntId}&routerName=scanOptimizePage`;
+            new QRCode(document.getElementById("qrcode1"), {
+                text: url1,
+                width: 200,
+                height: 200
+            });
+
+            // 2. 查询时间二维码 (固定链接)
+            const url2 = "https://m-ls.jd.com/order";
+            new QRCode(document.getElementById("qrcode2"), {
+                text: url2,
+                width: 200,
+                height: 200
+            });
+
+            // 3. 切换查询时长二维码 (固定链接 - 新增)
+            const url3 = "https://pro.m.jd.com/mall/active/38NnTAS6J17a7wU2ZGvv2Uj6AAZ7/index.html";
+            new QRCode(document.getElementById("qrcode3"), {
+                text: url3,
+                width: 200,
+                height: 200
+            });
+            
+            // 平滑滚动
+            setTimeout(() => {
+                window.scrollTo({ top: document.querySelector('.qr-item').offsetTop, behavior: 'smooth' });
+            }, 100);
+        }
+    </script>
+</body>
+</html>
