@@ -45,13 +45,13 @@
             padding: 30px;
             border-radius: 8px;
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
             text-align: center;
         }
 
         h2 {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-bottom: 20px;
             color: #ccc;
         }
@@ -67,7 +67,6 @@
             font-size: 18px;
             font-weight: bold;
             text-align: center;
-            transition: border-color 0.3s;
         }
 
         input[type="text"]:focus {
@@ -114,7 +113,7 @@
         .qrcode {
             display: flex;
             justify-content: center;
-            background: #fff; /* 二维码需要白色背景提高识别率 */
+            background: #fff;
             padding: 12px;
             border-radius: 4px;
             margin: 0 auto;
@@ -122,8 +121,8 @@
         }
 
         .footer {
-            margin-top: auto;
-            padding: 40px 0 20px;
+            margin-top: 40px;
+            padding-bottom: 20px;
             color: #666;
             font-size: 13px;
             text-align: center;
@@ -154,6 +153,11 @@
                 <div class="qr-title">定位阿姨后扫码查询时间</div>
                 <div id="qrcode2" class="qrcode"></div>
             </div>
+
+            <div class="qr-item">
+                <div class="qr-title">扫码切换查询时长</div>
+                <div id="qrcode3" class="qrcode"></div>
+            </div>
         </div>
     </div>
 
@@ -165,42 +169,14 @@
         function generateQRs() {
             const auntId = document.getElementById('auntIdInput').value.trim();
             if (!auntId) {
-                alert("工号不能为空哦");
+                alert("工号不能为空");
                 return;
             }
 
-            // 清空之前的二维码
+            // 清空旧内容
             document.getElementById('qrcode1').innerHTML = "";
             document.getElementById('qrcode2').innerHTML = "";
+            document.getElementById('qrcode3').innerHTML = "";
             
-            // 显示结果区域
-            document.getElementById('qrResult').style.display = 'block';
-
-            // 链接1：动态替换工号
-            const url1 = `https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=${auntId}&routerName=scanOptimizePage`;
-            new QRCode(document.getElementById("qrcode1"), {
-                text: url1,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-
-            // 链接2：查询时间
-            const url2 = "https://m-ls.jd.com/order";
-            new QRCode(document.getElementById("qrcode2"), {
-                text: url2,
-                width: 200,
-                height: 200,
-                colorDark : "#000000",
-                colorLight : "#ffffff",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-            
-            // 自动滚动到底部以便查看结果
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-        }
-    </script>
-</body>
-</html>
+            // 显示结果
+            document.getElementById('qrResult').style.display
