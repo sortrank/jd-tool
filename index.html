@@ -28,6 +28,7 @@
 
         .container { width: 100%; max-width: 700px; }
 
+        /* 顶部卡片 */
         .header-card {
             background: var(--card-bg);
             padding: 30px;
@@ -77,7 +78,7 @@
         }
         .btn-main:active { transform: scale(0.97); background: #c8160d; }
 
-        /* 二维码展示区 */
+        /* 二维码展示区 - 左右布局 */
         .qr-grid { 
             display: none; 
             gap: 20px; 
@@ -110,7 +111,7 @@
         .qr-title { font-weight: 600; margin-bottom: 15px; font-size: 16px; }
         .qr-container { background: #fff; padding: 10px; border-radius: 10px; }
 
-        /* 版权信息 */
+        /* 底部版权卡片 */
         .copyright-card {
             margin-top: 50px;
             padding: 20px 40px;
@@ -130,6 +131,7 @@
         .wechat-box { border-left: 1px solid #ddd; padding-left: 20px; }
         .wechat-id { font-family: monospace; font-size: 16px; color: var(--jd-red); font-weight: 600; }
 
+        /* 响应式适配 */
         @media (min-width: 600px) {
             .qr-grid { display: flex; flex-direction: row; }
         }
@@ -146,7 +148,7 @@
 <div class="container">
     <div class="header-card">
         <h1>京东业务助手</h1>
-        <p class="subtitle">王煮粥独家定制 · 极速查询版</p>
+        <p class="subtitle">王煮粥独家定制 · 极速版</p>
         <div class="input-box">
             <input type="number" id="aid" pattern="\d*" placeholder="输入阿姨 ID" onkeypress="if(event.keyCode==13) generate()">
             <button class="btn-main" onclick="generate()">查询阿姨时间</button>
@@ -182,7 +184,7 @@
     function generate() {
         const aid = document.getElementById('aid').value;
         
-        // 修改限制：最少4位，最多10位
+        // 限制改为最少4位数
         if (!/^\d{4,10}$/.test(aid)) {
             alert("请输入正确的4-10位数字ID");
             return;
@@ -205,6 +207,7 @@
         new QRCode(document.getElementById("q1"), { text: url1, width: 200, height: 200, colorDark: "#2c3e50" });
         new QRCode(document.getElementById("q2"), { text: url2, width: 200, height: 200, colorDark: "#2c3e50" });
 
+        // 平滑滚动
         setTimeout(() => {
             window.scrollTo({ top: grid.offsetTop - 20, behavior: 'smooth' });
         }, 100);
