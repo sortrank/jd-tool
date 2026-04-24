@@ -3,123 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>京东业务助手 - 王煮粥出品</title>
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>京东业务助手</title>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <style>
-        :root { --jd-red: #e1251b; --bg: #f7f8fa; --text: #333; }
-        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; }
-        .container { width: 100%; max-width: 600px; }
-        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
-        h1 { margin: 0 0 10px; font-size: 20px; }
-        p { margin: 0 0 20px; font-size: 13px; color: #999; }
-        .input-group { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-        input { width: 100%; max-width: 280px; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 20px; font-weight: bold; text-align: center; outline: none; }
+        :root { --jd-red: #e1251b; }
+        body { 
+            font-family: -apple-system, system-ui, sans-serif; 
+            background-color: #f7f7f7; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px;
+            margin: 0;
+        }
+        .container { width: 100%; max-width: 400px; }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        h3 { margin-top: 0; color: #333; font-size: 16px; }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            text-align: center;
+        }
         input:focus { border-color: var(--jd-red); }
-        .btn-confirm { padding: 12px 40px; background: var(--jd-red); color: white; border: none; border-radius: 10px; font-size: 16px; cursor: pointer; }
         
-        /* 二维码区 */
-        .qr-section { display: none; gap: 15px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
-        .qr-wrapper { background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); flex: 1; min-width: 260px; max-width: 280px; text-align: center; }
-        .step-badge { background: rgba(225, 37, 27, 0.08); color: var(--jd-red); padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 12px; display: inline-block; }
-        
-        /* 弹窗 */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; justify-content: center; align-items: center; }
-        .modal { background: white; padding: 25px; border-radius: 16px; width: 80%; max-width: 300px; text-align: center; }
-        .id-display { font-size: 32px; color: var(--jd-red); font-weight: bold; margin: 15px 0; }
-        .modal-btns { display: flex; gap: 10px; }
-        .modal-btns button { flex: 1; padding: 12px; border: none; border-radius: 8px; cursor: pointer; }
-        
-        .footer { margin-top: auto; padding: 40px 0 20px; font-size: 12px; color: #999; }
-        @media (max-width: 580px) { .qr-section { flex-direction: column; align-items: center; } }
+        .qr-section { display: none; margin-top: 15px; }
+        .qr-box { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 15px 0;
+        }
+        .qr-canvas { margin: 10px 0; }
+        .step-tip {
+            font-size: 13px;
+            color: var(--jd-red);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .url-display { font-size: 10px; color: #999; word-break: break-all; margin-top: 5px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="card">
-        <h1>京东业务助手</h1>
-        <p>请输入阿姨 ID 并生成扫码链接</p>
-        <div class="input-group">
-            <input type="number" id="aid" pattern="\d*" placeholder="输入ID数字" />
-            <button class="btn-confirm" onclick="showConfirm()">确认 ID</button>
-        </div>
+        <h3>请输入阿姨 ID</h3>
+        <input type="number" id="auntIdInput" placeholder="输入 6-10 位数字" oninput="generateQRs()" />
     </div>
 
-    <div id="resArea" class="qr-section">
-        <div class="qr-wrapper">
-            <div class="step-badge">第一步</div>
-            <div>扫码进入详情页</div>
-            <div id="q1" style="margin-top:15px; display:flex; justify-content:center;"></div>
+    <div id="resultArea" class="qr-section">
+        <div class="card">
+            <div class="step-tip">第一步：先扫这个（阿姨详情）</div>
+            <div id="qrcode1" class="qr-box"></div>
+            <div id="url1" class="url-display"></div>
         </div>
-        <div class="qr-wrapper">
-            <div class="step-badge">第二步</div>
-            <div>扫码进入订单页</div>
-            <div id="q2" style="margin-top:15px; display:flex; justify-content:center;"></div>
+
+        <div class="card">
+            <div class="step-tip">第二步：再扫这个（订单列表）</div>
+            <div id="qrcode2" class="qr-box"></div>
+            <div id="url2" class="url-display"></div>
         </div>
     </div>
 </div>
-
-<div id="modalOverlay" class="modal-overlay">
-    <div class="modal">
-        <h2 style="font-size:18px; margin:0;">核对 ID</h2>
-        <div id="displayId" class="id-display"></div>
-        <div class="modal-btns">
-            <button onclick="hideModal()" style="background:#eee;">返回</button>
-            <button onclick="generate()" style="background:var(--jd-red); color:white;">生成</button>
-        </div>
-    </div>
-</div>
-
-<div class="footer">作者：王煮粥 | 微信：novilos</div>
 
 <script>
-    let currentId = "";
+    // 初始化二维码对象
+    let qr1 = null;
+    let qr2 = null;
 
-    function showConfirm() {
-        const val = document.getElementById('aid').value;
-        if(!/^\d{6,10}$/.test(val)) {
-            alert("请输入6-10位数字ID");
-            return;
-        }
-        currentId = val;
-        document.getElementById('displayId').innerText = val;
-        document.getElementById('modalOverlay').style.display = 'flex';
-    }
-
-    function hideModal() {
-        document.getElementById('modalOverlay').style.display = 'none';
-    }
-
-    function generate() {
-        hideModal();
+    function generateQRs() {
+        const id = document.getElementById('auntIdInput').value;
+        const resultArea = document.getElementById('resultArea');
         
-        // 检查 QRCode 库是否加载成功
-        if (typeof QRCode === "undefined") {
-            alert("二维码库还在加载中，请稍等3秒再试。如果一直提示，请检查网络或刷新页面。");
-            return;
-        }
-
-        const resArea = document.getElementById('resArea');
-        resArea.style.display = 'flex';
-        
-        document.getElementById('q1').innerHTML = "";
-        document.getElementById('q2').innerHTML = "";
-
-        const url1 = "https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=" + currentId + "&routerName=scanOptimizePage";
-        const url2 = "https://m-ls.jd.com/order";
-
-        try {
-            new QRCode(document.getElementById("q1"), { text: url1, width: 180, height: 180 });
-            new QRCode(document.getElementById("q2"), { text: url2, width: 180, height: 180 });
+        // 当输入长度在 6-10 位时显示并生成
+        if (/^\d{6,10}$/.test(id)) {
+            resultArea.style.display = 'block';
             
-            // 滚动效果
-            setTimeout(() => {
-                window.scrollTo({ top: resArea.offsetTop - 20, behavior: 'smooth' });
-            }, 100);
-        } catch (e) {
-            alert("生成失败，请刷新重试");
+            const targetUrl1 = `https://m-ls.jd.com/?jdreactkey=JDReactCleaning&jdreactapp=JDReactCleaning&sourceType=7&auntId=${id}&routerName=scanOptimizePage`;
+            const targetUrl2 = `https://m-ls.jd.com/order`;
+
+            // 更新链接文字显示（可选）
+            document.getElementById('url1').innerText = "ID: " + id;
+            document.getElementById('url2').innerText = "跳转至订单页";
+
+            // 清除旧二维码并生成新二维码
+            document.getElementById('qrcode1').innerHTML = "";
+            document.getElementById('qrcode2').innerHTML = "";
+
+            new QRCode(document.getElementById("qrcode1"), {
+                text: targetUrl1,
+                width: 180,
+                height: 180,
+                colorDark : "#000000",
+                colorLight : "#ffffff"
+            });
+
+            new QRCode(document.getElementById("qrcode2"), {
+                text: targetUrl2,
+                width: 180,
+                height: 180,
+                colorDark : "#000000",
+                colorLight : "#ffffff"
+            });
+        } else {
+            resultArea.style.display = 'none';
         }
     }
 </script>
+
 </body>
 </html>
