@@ -1,1 +1,1 @@
-# jd-tool
+# jdtool
